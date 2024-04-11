@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class Organizer(BaseModel):
     email: str
-
+    name: str
 
 class Joiner(BaseModel):
     name: str
