@@ -14,6 +14,7 @@ class Joiner(BaseModel):
 
 class Event(BaseModel):
     id: Optional[int]
+    name: str
     date: str
     organizer: Organizer
     status: str
