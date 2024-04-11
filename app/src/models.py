@@ -9,6 +9,7 @@ class Organizer(BaseModel):
 class Joiner(BaseModel):
     name: str
     country: str
+    email: str
 
 
 class Event(BaseModel):
