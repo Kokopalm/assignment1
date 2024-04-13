@@ -1,16 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from .models import Event
+from flask import Flask, jsonify, request
+from event_analyzer import EventAnalyzer
+from event_file_manager import EventFileManager
 
 router = APIRouter()
 
 
 @router.get("/events", response_model=List[Event])
 async def get_all_events():
-from flask import Flask, jsonify
-from event_file_manager import EventFileManager  # Import the EventFileManager class
-
-def get_all_events():
     # Utilize EventFileManager class to retrieve all events
     events = EventFileManager.read_events_from_file()
     return jsonify(events)
@@ -22,9 +21,6 @@ if __name__ == '__main__':
 
 @router.get("/events/filter", response_model=List[Event])
 async def get_events_by_filter(date: str = None, organizer: str = None, status: str = None, event_type: str = None):
-
-from flask import request, jsonify
-from event_file_manager import EventFileManager  # Import the EventFileManager class
 
     # Retrieve parameters from the request query string
     date = request.args.get('date')
@@ -54,9 +50,6 @@ from event_file_manager import EventFileManager  # Import the EventFileManager c
 @router.get("/events/{event_id}", response_model=Event)
 async def get_event_by_id(event_id: int):
 
-from flask import jsonify, request
-from event_file_manager import EventFileManager  # Import the EventFileManager class
-
     # Utilize EventFileManager class to retrieve all events
     events = EventFileManager.read_events_from_file()
     
@@ -72,8 +65,6 @@ from event_file_manager import EventFileManager  # Import the EventFileManager c
 
 @router.post("/events", response_model=Event)
 async def create_event(event: Event):
-from flask import request, jsonify
-from event_file_manager import EventFileManager  # Import the EventFileManager class
 
     # Retrieve the new event data from the request
     new_event = request.json
@@ -98,10 +89,6 @@ from event_file_manager import EventFileManager  # Import the EventFileManager c
 
 @router.put("/events/{event_id}", response_model=Event)
 async def update_event(event_id: int, event: Event):
-    
-from flask import request, jsonify
-from event_file_manager import EventFileManager  # Import the EventFileManager class
-
     # Retrieve the updated event data from the request
     updated_event = request.json
     
@@ -130,8 +117,6 @@ from event_file_manager import EventFileManager  # Import the EventFileManager c
 
 @router.delete("/events/{event_id}")
 async def delete_event(event_id: int):
-from flask import jsonify
-from event_file_manager import EventFileManager  # Import the EventFileManager class
 
     # Utilize EventFileManager class to retrieve all events
     events = EventFileManager.read_events_from_file()
@@ -158,4 +143,17 @@ from event_file_manager import EventFileManager  # Import the EventFileManager c
 
 @router.get("/events/joiners/multiple-meetings")
 async def get_joiners_multiple_meetings():
-    pass
+    # Utilize EventFileManager class to retrieve all events
+    events = EventFileManager.read_events_from_file()
+    
+    # Initialize EventAnalyzer class
+    event_analyzer = EventAnalyzer()
+    
+    # Get joiners who attended multiple meetings
+    joiners_multiple_meetings = event_analyzer.get_joiners_multiple_meetings(events)
+    
+    if not joiners_multiple_meetings:
+        return jsonify({"message": "No joiners attending at least 2 meetings"})
+    
+    return jsonify(joiners_multiple_meetings)
+
