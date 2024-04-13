@@ -7,7 +7,20 @@ router = APIRouter()
 
 @router.get("/events", response_model=List[Event])
 async def get_all_events():
-    pass
+    from flask import Flask, jsonify
+from event_file_manager import EventFileManager  # Import the EventFileManager class
+
+app = Flask(__name__)
+
+@app.route('/events', methods=['GET'])
+def get_all_events():
+    # Utilize EventFileManager class to retrieve all events
+    events = EventFileManager.read_events_from_file()
+    return jsonify(events)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 
 @router.get("/events/filter", response_model=List[Event])
